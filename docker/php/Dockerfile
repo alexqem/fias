@@ -68,16 +68,12 @@ COPY --link --chown=${WWWUSER}:${WWWUSER} ./xdebug.ini "${PHP_INI_DIR}"/conf.d
 COPY --link --chown=${WWWUSER}:${WWWUSER} ./supervisord.conf /etc/
 COPY --link --chown=${WWWUSER}:${WWWUSER} ./supervisord.worker.conf /etc/supervisor/conf.d/
 
-RUN mkdir -p /var/www/html/storage/logs/ \
-    /var/www/html/storage/framework/{sessions,views,cache,testing} \
-    /var/www/html/bootstrap/cache \
-    && touch /var/www/html/storage/logs/worker.log \
-    && touch /var/www/html/storage/logs/scheduler.log \
-    && chown -R ${USER}:${USER} /var/www/html \
-    && chmod -R 775 /var/www/html/storage \
-
 USER ${USER}
 
+RUN mkdir -p \
+    storage/framework/{sessions,views,cache,testing} \
+    storage/logs \
+    bootstrap/cache && chmod -R a+rw storage
 EXPOSE 9000
 
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
