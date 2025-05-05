@@ -1,0 +1,93 @@
+services:
+  nginx:
+    build:
+      context: ./docker/nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./laravel:/var/www/html
+    depends_on:
+      - php
+    networks:
+      - fias-network
+
+  php:
+    build:
+      context: ./docker/php
+    volumes:
+      - ./laravel:/var/www/html
+      - ./gar_archive:/var/www/html/gar_archive
+    environment:
+      PHP_IDE_CONFIG: "serverName=PHPSTORM"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - fias-network
+    ports:
+      - "9000:9000"
+      - "3000:3000"
+      - "5173:5173"
+      - "13714:13714"
+
+  postgres:
+    build:
+      context: ./docker/postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: fias_db
+      POSTGRES_USER: fias_user
+      POSTGRES_PASSWORD: ${PG_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - fias-network
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./docker/redis/redis.conf:/usr/local/etc/redis/redis.conf
+      - redis_data:/data
+    command: redis-server /usr/local/etc/redis/redis.conf
+    networks:
+      - fias-network
+
+  elasticsearch:
+    build:
+      context: ./docker/php
+    environment:
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms4g -Xmx4g"  # 4GB heap size
+      - bootstrap.memory_lock=true     # Prevents swapping
+      - xpack.security.enabled=false   # Disable security for dev
+      - indices.query.bool.max_clause_count=8192  # For complex queries
+      - indices.memory.index_buffer_size=30%      # More memory for indexing
+      - thread_pool.write.queue_size=1000         # Larger queue for bulk indexing
+      - action.auto_create_index=true             # Auto create indices
+    ulimits:
+        memlock:
+          soft: -1
+          hard: -1
+        nofile:
+          soft: 65536
+          hard: 65536
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    networks:
+      - fias-network
+networks:
+  fias-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data:
+  elasticsearch_data:

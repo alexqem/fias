@@ -1,0 +1,27 @@
+cluster.name: "fias-cluster"
+node.name: "fias-node-1"
+network.host: 0.0.0.0
+
+# Performance settings
+bootstrap.memory_lock: true
+discovery.type: single-node
+indices.query.bool.max_clause_count: 8192
+indices.memory.index_buffer_size: 30%
+thread_pool.write.queue_size: 1000
+action.auto_create_index: true
+
+# Path settings
+path.data: /usr/share/elasticsearch/data
+path.logs: /usr/share/elasticsearch/logs
+
+# Indexing settings
+index.refresh_interval: 30s
+index.number_of_shards: 3
+index.number_of_replicas: 0  # For development - use 1+ for production
+
+# Fielddata settings
+indices.fielddata.cache.size: 40%  # Allow more memory for field data
+
+# Translog settings
+index.translog.durability: async
+index.translog.sync_interval: 30s
