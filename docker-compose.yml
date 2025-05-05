@@ -57,32 +57,6 @@ services:
     networks:
       - fias-network
 
-  elasticsearch:
-    build:
-      context: ./docker/php
-    environment:
-      - discovery.type=single-node
-      - "ES_JAVA_OPTS=-Xms4g -Xmx4g"  # 4GB heap size
-      - bootstrap.memory_lock=true     # Prevents swapping
-      - xpack.security.enabled=false   # Disable security for dev
-      - indices.query.bool.max_clause_count=8192  # For complex queries
-      - indices.memory.index_buffer_size=30%      # More memory for indexing
-      - thread_pool.write.queue_size=1000         # Larger queue for bulk indexing
-      - action.auto_create_index=true             # Auto create indices
-    ulimits:
-        memlock:
-          soft: -1
-          hard: -1
-        nofile:
-          soft: 65536
-          hard: 65536
-    ports:
-      - "9200:9200"
-      - "9300:9300"
-    volumes:
-      - elasticsearch_data:/usr/share/elasticsearch/data
-    networks:
-      - fias-network
 networks:
   fias-network:
     driver: bridge
@@ -90,4 +64,3 @@ networks:
 volumes:
   postgres_data:
   redis_data:
-  elasticsearch_data:
