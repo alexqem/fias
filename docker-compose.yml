@@ -14,9 +14,6 @@ services:
   php:
     build:
       context: ./docker/php
-      args:
-        WWWUSER: 1000
-        WWWGROUP: 1000
     volumes:
       - ./laravel:/var/www/html
       - ./gar_archive:/var/www/html/gar_archive
@@ -24,7 +21,6 @@ services:
       PHP_IDE_CONFIG: "serverName=PHPSTORM"
     extra_hosts:
       - "host.docker.internal:host-gateway"
-    user: "1000:1000"
     depends_on:
       - postgres
       - redis
