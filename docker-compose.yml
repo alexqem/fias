@@ -22,7 +22,7 @@ services:
       - ./gar_archive:/var/www/html/gar_archive
     environment:
       PHP_IDE_CONFIG: "serverName=PHPSTORM"
-      
+    user: "1001:1001"
     extra_hosts:
       - "host.docker.internal:host-gateway"
     depends_on:
