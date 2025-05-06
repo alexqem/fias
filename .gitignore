@@ -1,3 +1,5 @@
 ./gar_archive
 
 /gar_archive/
+
+.env
