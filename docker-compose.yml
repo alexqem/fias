@@ -14,9 +14,9 @@ services:
   php:
     build:
       context: ./docker/php
-       args:
-         WWWUSER: 1001
-         WWWGROUP: 1001
+      args:
+        WWWUSER: 1001
+        WWWGROUP: 1001
     volumes:
       - ./laravel:/var/www/html
       - ./gar_archive:/var/www/html/gar_archive
