@@ -14,15 +14,11 @@ services:
   php:
     build:
       context: ./docker/php
-      args:
-        WWWUSER: 1001
-        WWWGROUP: 1001
     volumes:
       - ./laravel:/var/www/html
       - ./gar_archive:/var/www/html/gar_archive
     environment:
       PHP_IDE_CONFIG: "serverName=PHPSTORM"
-    user: "1001:1001"
     extra_hosts:
       - "host.docker.internal:host-gateway"
     depends_on:
